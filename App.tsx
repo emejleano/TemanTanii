@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, createContext, useContext, useMemo, useRef } from 'react';
-import { User, Role, FarmerStatus, Product, Article, DevicePurchase, SensorData, ProduceOrder, ProduceOrderStatus, ChatMessage } from './types';
+import { User, Role, FarmerStatus, Product, Article, DevicePurchase, SensorData, ProduceOrder, ProduceOrderStatus, ChatMessage, FinancialInput, FinancialReport } from './types';
 import { mockApiService, weatherService, chatbotService } from './services';
 import { Button, Card, Input, Modal, Spinner, IconLeaf, IconSun, IconDrop, IconChat, StatusBadge } from './components';
 
@@ -527,7 +527,7 @@ const RegisterPage = () => {
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center">
-   <img src="https://emejleano.github.io/TemanTanii/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
+   <img src="https://emejleano.github.io/TemanTanii/logo.png" alt="logo." className="h-20 w-20" />
 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Buat Akun Baru</h2>
                  <p className="mt-2 text-center text-sm text-gray-600">
@@ -795,6 +795,180 @@ const AdminDashboard = () => {
                 </form>
             </Modal>
         </div>
+    );
+};
+
+const FinancialDashboard = () => {
+    const [inputs, setInputs] = useState<FinancialInput>({
+        seeds: 0,
+        fertilizer: 0,
+        labor: 0,
+        others: 0,
+        harvestAmount: 0,
+        marketPrice: 0
+    });
+    const [report, setReport] = useState<FinancialReport | null>(null);
+
+    const calculateFinancials = () => {
+        const totalCost = inputs.seeds + inputs.fertilizer + inputs.labor + inputs.others;
+        const estimatedRevenue = inputs.harvestAmount * inputs.marketPrice;
+        const profit = estimatedRevenue - totalCost;
+        
+        // Break-even calculations
+        const breakEvenPoint = totalCost / inputs.marketPrice;
+        // Assume 120 days for typical harvest cycle
+        const breakEvenDays = (breakEvenPoint / inputs.harvestAmount) * 120;
+
+        setReport({
+            totalCost,
+            estimatedRevenue,
+            profit,
+            breakEvenPoint,
+            breakEvenDays
+        });
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setInputs(prev => ({
+            ...prev,
+            [name]: Number(value) || 0
+        }));
+    };
+
+    const formatCurrency = (amount: number) => {
+        return `Rp ${amount.toLocaleString('id-ID')}`;
+    };
+
+    return (
+        <Card>
+            <h2 className="text-xl font-bold mb-4">Dashboard Keuangan</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Input Section */}
+                <div className="space-y-4">
+                    <h3 className="font-semibold text-lg">Input Biaya Produksi</h3>
+                    
+                    <div>
+                        <label className="block text-sm text-gray-600">Biaya Benih</label>
+                        <Input
+                            type="number"
+                            name="seeds"
+                            value={inputs.seeds}
+                            onChange={handleInputChange}
+                            placeholder="Rp"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm text-gray-600">Biaya Pupuk</label>
+                        <Input
+                            type="number"
+                            name="fertilizer"
+                            value={inputs.fertilizer}
+                            onChange={handleInputChange}
+                            placeholder="Rp"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm text-gray-600">Biaya Tenaga Kerja</label>
+                        <Input
+                            type="number"
+                            name="labor"
+                            value={inputs.labor}
+                            onChange={handleInputChange}
+                            placeholder="Rp"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm text-gray-600">Biaya Lain-lain</label>
+                        <Input
+                            type="number"
+                            name="others"
+                            value={inputs.others}
+                            onChange={handleInputChange}
+                            placeholder="Rp"
+                        />
+                    </div>
+
+                    <div className="border-t pt-4">
+                        <h3 className="font-semibold text-lg mb-2">Estimasi Pendapatan</h3>
+                        
+                        <div>
+                            <label className="block text-sm text-gray-600">Perkiraan Hasil Panen (kg)</label>
+                            <Input
+                                type="number"
+                                name="harvestAmount"
+                                value={inputs.harvestAmount}
+                                onChange={handleInputChange}
+                                placeholder="kg"
+                            />
+                        </div>
+
+                        <div className="mt-2">
+                            <label className="block text-sm text-gray-600">Harga Pasar per kg</label>
+                            <Input
+                                type="number"
+                                name="marketPrice"
+                                value={inputs.marketPrice}
+                                onChange={handleInputChange}
+                                placeholder="Rp/kg"
+                            />
+                        </div>
+                    </div>
+
+                    <Button onClick={calculateFinancials} className="w-full">
+                        Hitung Proyeksi
+                    </Button>
+                </div>
+
+                {/* Results Section */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-semibold text-lg mb-4">Hasil Analisis Keuangan</h3>
+                    
+                    {report ? (
+                        <div className="space-y-4">
+                            <div className="p-3 bg-white rounded-md">
+                                <p className="text-sm text-gray-600">Total Biaya Produksi</p>
+                                <p className="text-xl font-bold text-gray-900">{formatCurrency(report.totalCost)}</p>
+                            </div>
+
+                            <div className="p-3 bg-white rounded-md">
+                                <p className="text-sm text-gray-600">Estimasi Pendapatan</p>
+                                <p className="text-xl font-bold text-green-600">{formatCurrency(report.estimatedRevenue)}</p>
+                            </div>
+
+                            <div className="p-3 bg-white rounded-md">
+                                <p className="text-sm text-gray-600">Proyeksi Keuntungan</p>
+                                <p className={`text-xl font-bold ${report.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                    {formatCurrency(report.profit)}
+                                </p>
+                            </div>
+
+                            <div className="border-t pt-4">
+                                <h4 className="font-semibold mb-2">Break-even Point (BEP)</h4>
+                                <p className="text-sm text-gray-600">
+                                    Anda perlu menjual minimal {report.breakEvenPoint.toFixed(1)} kg untuk mencapai BEP
+                                </p>
+                                <p className="text-sm text-gray-600 mt-1">
+                                    Perkiraan waktu mencapai BEP: {report.breakEvenDays.toFixed(0)} hari
+                                </p>
+                            </div>
+
+                            <div className="mt-4 text-sm text-gray-500">
+                                * Perhitungan ini adalah estimasi dan dapat berbeda dengan hasil aktual
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-center text-gray-500">
+                            Isi form di sebelah kiri dan klik "Hitung Proyeksi" untuk melihat analisis
+                        </div>
+                    )}
+                </div>
+            </div>
+        </Card>
     );
 };
 
@@ -1490,11 +1664,18 @@ const FarmerDashboard = () => {
     >
       Chat Pembeli
     </button>
+    <button
+      onClick={() => setActiveTab('financial')}
+      className={`py-2 px-4 ${activeTab === 'financial' ? 'border-b-2 border-green-600 text-green-600' : 'text-gray-500'}`}
+    >
+      Keuangan
+    </button>
   </div>
   {activeTab === 'dashboard' && renderDashboardOverview()}
   {activeTab === 'marketplace' && renderFarmerMarketplace()}
   {activeTab === 'orders' && renderOrderManagement()}
   {activeTab === 'chats' && renderChats()}
+  {activeTab === 'financial' && <FinancialDashboard />}
 </div>
   );
 };

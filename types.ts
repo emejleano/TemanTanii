@@ -94,3 +94,20 @@ export interface ChatMessage {
     timestamp: string;
     read: boolean;
 }
+
+export interface FinancialInput {
+    seeds: number;
+    fertilizer: number;
+    labor: number;
+    others: number;
+    harvestAmount: number;
+    marketPrice: number;
+}
+
+export interface FinancialReport {
+    totalCost: number;
+    estimatedRevenue: number;
+    profit: number;
+    breakEvenPoint: number;
+    breakEvenDays: number;
+}
