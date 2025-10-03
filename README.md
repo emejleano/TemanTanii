@@ -30,21 +30,7 @@ Proyek ini bersifat **simulasi frontend** menggunakan React + TypeScript dan **m
 
 ## 🧠 Arsitektur Sistem
 
-Proyek ini menggunakan pendekatan berbasis **mock data dan DOM state** tanpa database, dengan struktur utama sebagai berikut:
-
-src/
-├─ components/
-│ ├─ FarmerDashboard.tsx # Dashboard utama petani
-│ ├─ BuyerDashboard.tsx # Dashboard pembeli
-│ ├─ AdminDashboard.tsx # Dashboard admin
-│ ├─ SensorChart.tsx # Grafik sensor IoT
-│ ├─ WeatherWidget.tsx # Prakiraan cuaca
-│ └─ ...
-├─ types.ts # Definisi tipe data (User, Product, etc.)
-├─ constants.ts # API keys dan variabel global
-├─ App.tsx # Entry utama aplikasi
-└─ index.tsx # Entry React DOM
-
+Proyek ini menggunakan pendekatan berbasis **mock data dan DOM state** tanpa database, dengan struktur 
 
 ---
 
@@ -81,6 +67,8 @@ npm install
 
 # 3. Jalankan aplikasi
 npm run dev
+
+```
 
 
 👨‍💻 Pengembang
