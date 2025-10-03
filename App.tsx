@@ -119,7 +119,7 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <a href="/#" className="flex-shrink-0 flex items-center cursor-pointer">
-            <img src="/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
+            <img src="https://emejleano.github.io/TemanTanii/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
             <span className="ml-2 text-xl font-bold text-green-700">Teman Tani</span>
           </a>
           <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -149,7 +149,7 @@ const Footer = () => (
             <div className="xl:grid xl:grid-cols-3 xl:gap-8">
                 <div className="space-y-8 xl:col-span-1">
                      <div className="flex-shrink-0 flex items-center">
-                        <img src="/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
+                        <img src="https://emejleano.github.io/TemanTanii/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
                         <span className="ml-2 text-xl font-bold text-green-700">Teman Tani</span>
                     </div>
                     <p className="text-gray-500 text-base">
@@ -463,7 +463,7 @@ const LoginPage = () => {
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center">
-   <img src="/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
+   <img src="https://emejleano.github.io/TemanTanii/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Login ke Akun Anda</h2>
                 <p className="mt-2 text-center text-sm text-gray-600">
@@ -527,7 +527,7 @@ const RegisterPage = () => {
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center">
-   <img src="/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
+   <img src="https://emejleano.github.io/TemanTanii/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Buat Akun Baru</h2>
                  <p className="mt-2 text-center text-sm text-gray-600">
