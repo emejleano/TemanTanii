@@ -1,20 +1,94 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+<p align="center">
+  <img src="./public/logo.png" alt="TemanTani Logo" width="150" />
+</p>
 
-# Run and deploy your AI Studio app
+# 🌾 TemanTani – Smart Agriculture Dashboard
 
-This contains everything you need to run your app locally.
+TemanTani adalah aplikasi **web dashboard pertanian pintar** yang mengintegrasikan **IoT, AI, Big Data, dan marketplace** untuk membantu petani dalam mengelola lahan, memantau kondisi tanaman secara real-time, melakukan prediksi hasil panen, serta memasarkan hasil pertanian secara langsung ke pembeli.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1_iYV-SopJc5spyOVeU41buMkeCNjZG7t
+Proyek ini bersifat **simulasi frontend** menggunakan React + TypeScript dan **mock data/DOM**, sehingga dapat dijalankan tanpa backend maupun database nyata.  
 
-## Run Locally
+---
 
-**Prerequisites:**  Node.js
+## ✨ Fitur Utama
+
+### 🌿 Dashboard Petani
+- 📶 **Data Sensor Real-time** – Kelembapan, suhu, dan riwayat dalam bentuk grafik.
+- ☁️ **Prakiraan Cuaca Harian** – Menggunakan **OpenWeather API**.
+- 💧 **Kontrol Smart Irrigation** – Mode otomatis dan manual, menampilkan data debit air saat pompa aktif.
+- 🔔 **Notifikasi Otomatis** – Misalnya peringatan kelembapan rendah.
+- 🌱 **Eco-Score Keberlanjutan** – Skor A–E berdasarkan analisis LCA siklus hidup tanaman.
+- 📊 **Prediksi Hasil Panen (AI)** – Input data panen sebelumnya, tampilkan hasil prediksi dan grafik tren.
+- 📈 **Tren Harga Pasar** – Simulasi harga komoditas terkini.
+- 🛒 **Marketplace Petani (CRUD)** – Upload, kelola, dan jual hasil panen secara langsung.
+- 📁 **Laporan Keberlanjutan (PDF)** – Unduh laporan dari hasil eco-score.
+- 🧠 **Chatbot Bantuan Petani (AI)** – Berbasis API ChatGPT eksternal.
+- 💬 **Fitur Komunitas** – Artikel pertanian, komentar, dan interaksi.
+- 📬 **Pesan Pembeli** – Petani menerima dan membalas pesan dari pembeli.
+
+---
+
+## 🧠 Arsitektur Sistem
+
+Proyek ini menggunakan pendekatan berbasis **mock data dan DOM state** tanpa database, dengan struktur utama sebagai berikut:
+
+src/
+├─ components/
+│ ├─ FarmerDashboard.tsx # Dashboard utama petani
+│ ├─ BuyerDashboard.tsx # Dashboard pembeli
+│ ├─ AdminDashboard.tsx # Dashboard admin
+│ ├─ SensorChart.tsx # Grafik sensor IoT
+│ ├─ WeatherWidget.tsx # Prakiraan cuaca
+│ └─ ...
+├─ types.ts # Definisi tipe data (User, Product, etc.)
+├─ constants.ts # API keys dan variabel global
+├─ App.tsx # Entry utama aplikasi
+└─ index.tsx # Entry React DOM
 
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+---
+
+## 🔑 API yang Digunakan
+
+| Layanan | URL | Fungsi |
+|--------|------|---------|
+| 🌦️ OpenWeather | Prakiraan cuaca harian |
+| 🤖 ChatGPT API | Chatbot bantuan petani |
+| 📊 Mock API Internal | `mockApiService` | CRUD pengguna, produk, order, forecasting, eco-score |
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+
+- ⚛️ **React + TypeScript** – UI dinamis dan aman tipe.
+- 📡 **Mock API & DOM State** – Simulasi data tanpa backend.
+- 🌐 **OpenWeather API** – Data cuaca real-time.
+- 🧠 **ChatGPT API (Ferdev)** – AI chatbot & rekomendasi panen.
+- 📊 **Recharts** – Visualisasi data sensor dan hasil panen.
+- 🎨 **Tailwind CSS + ShadCN UI** – Tampilan modern dan responsif.
+
+---
+
+## 📦 Instalasi dan Menjalankan Proyek
+
+```bash
+# 1. Clone repository
+git clone https://github.com/username/teman-tani.git
+cd teman-tani
+
+# 2. Install dependencies
+npm install
+
+# 3. Jalankan aplikasi
+npm run dev
+
+
+👨‍💻 Pengembang
+
+Dikembangkan oleh Emejleano Rusmin Nggepo, Zahra Ismaya, dan Nurul Santi Hafifah
+
+🌾 TemanTani – Solusi Pertanian Cerdas untuk Masa Depan Berkelanjutan.
+
+<p align="center">
+  <img src="./public/logo.png" alt="TemanTani Logo" width="150" />
+</p>
