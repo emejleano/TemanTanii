@@ -111,31 +111,76 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 
 // --- UI COMPONENTS ---
-
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
-  return (
+  
+  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, section?: string) => {
+    e.preventDefault();
+    
+    // If user is logged in, first navigate to home page
+    if (user) {
+      window.location.hash = '/';
+      // Wait for hash change to complete
+      setTimeout(() => {
+        // Then scroll to section if specified
+        if (section) {
+          const element = document.getElementById(section);
+          element?.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      // If not logged in, just scroll to section
+      if (section) {
+        const element = document.getElementById(section);
+        element?.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+  
+return (
     <nav className="bg-white shadow-sm sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <a href="/#" className="flex-shrink-0 flex items-center cursor-pointer">
+          <a 
+            href="#" 
+            onClick={(e) => handleNavigation(e)}
+            className="flex-shrink-0 flex items-center cursor-pointer"
+          >
             <img src="https://emejleano.github.io/TemanTanii/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
             <span className="ml-2 text-xl font-bold text-green-700">Teman Tani</span>
           </a>
           <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-            <a href="/#about" className="text-gray-500 hover:text-green-600 inline-flex items-center px-1 pt-1 text-sm font-medium">Tentang Kami</a>
-            <a href="/#features" className="text-gray-500 hover:text-green-600 inline-flex items-center px-1 pt-1 text-sm font-medium">Fitur</a>
-            <a href="/#contact" className="text-gray-500 hover:text-green-600 inline-flex items-center px-1 pt-1 text-sm font-medium">Kontak</a>
+            <a 
+              href="#about" 
+              onClick={(e) => handleNavigation(e, 'about')}
+              className="text-gray-500 hover:text-green-600 inline-flex items-center px-1 pt-1 text-sm font-medium"
+            >
+              Tentang Kami
+            </a>
+            <a 
+              href="#features" 
+              onClick={(e) => handleNavigation(e, 'features')}
+              className="text-gray-500 hover:text-green-600 inline-flex items-center px-1 pt-1 text-sm font-medium"
+            >
+              Fitur
+            </a>
+            <a 
+              href="#contact" 
+              onClick={(e) => handleNavigation(e, 'contact')}
+              className="text-gray-500 hover:text-green-600 inline-flex items-center px-1 pt-1 text-sm font-medium"
+            >
+              Kontak
+            </a>
           </div>
           <div className="flex items-center">
             {user ? (
-                 <Button onClick={() => logout() } variant="secondary">Logout</Button>
+              <Button onClick={() => logout()} variant="secondary">Logout</Button>
             ) : (
               <>
                 <Button onClick={() => window.location.hash = '/login'} variant="secondary" className="mr-2">Login</Button>
                 <Button onClick={() => window.location.hash = '/register'} variant="primary">Daftar</Button>
               </>
-            )}
+              )}
           </div>
         </div>
       </div>
