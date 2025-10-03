@@ -136,7 +136,7 @@ const Navbar: React.FC = () => {
       }
     }
   };
-  
+
 return (
     <nav className="bg-white shadow-sm sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -415,7 +415,7 @@ const HomePage = () => (
           </div>
         </div>
         <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-          <img className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full" src="https://picsum.photos/seed/farm/1200/800" alt="Farmer in a field" />
+          <img className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full" src="https://i.pinimg.com/1200x/62/d8/1d/62d81d5394fdff21d07134d422fdb0d8.jpg" alt="Farmer in a field" />
         </div>
       </div>
 
