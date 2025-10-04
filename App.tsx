@@ -1017,11 +1017,113 @@ const FinancialDashboard = () => {
     );
 };
 
+// Fungsi untuk menghitung Eco-Score
+const calculateEcoScore = ({
+  debit_air_L_per_menit,
+  durasi_pompa_menit,
+  flow_rate_L_per_detik,
+  durasi_sprayer_detik,
+  pupuk_digunakan,
+  pestisida_digunakan,
+  energi_kWh,
+  limbah_kg,
+  ideal_air_L = 5000, // Default nilai ideal
+  pupuk_ideal = 5,
+  pestisida_ideal = 2,
+  co2_ideal = 10, // Energi dalam kWh
+  limbah_ideal = 3,
+}) => {
+  // Pastikan nilai input tidak terlalu kecil
+  pupuk_digunakan = Math.max(pupuk_digunakan, 0.1);
+  pestisida_digunakan = Math.max(pestisida_digunakan, 0.1);
+  energi_kWh = Math.max(energi_kWh, 0.1);
+  limbah_kg = Math.max(limbah_kg, 0.1);
+
+  // Hitung total penggunaan air
+  const total_air = (debit_air_L_per_menit * durasi_pompa_menit) + (flow_rate_L_per_detik * durasi_sprayer_detik);
+
+  // Hitung skor masing-masing kategori (0-100) menggunakan rasio logaritmik
+  const skor_air = Math.max(0, 100 - (Math.abs(total_air - ideal_air_L) / ideal_air_L) * 100);
+  const skor_pupuk = Math.max(0, 100 - (Math.abs(Math.log10(pupuk_digunakan / pupuk_ideal)) * 100));
+  const skor_pestisida = Math.max(0, 100 - (Math.abs(Math.log10(pestisida_digunakan / pestisida_ideal)) * 100));
+  const skor_energi = Math.max(0, 100 - (Math.abs(Math.log10(energi_kWh / co2_ideal)) * 100));
+  const skor_limbah = Math.max(0, 100 - (Math.abs(Math.log10(limbah_kg / limbah_ideal)) * 100));
+
+  // Hitung total Eco-Score (rata-rata tertimbang)
+  const eco_score_total = (
+    skor_air * 0.25 +
+    skor_pupuk * 0.20 +
+    skor_pestisida * 0.20 +
+    skor_energi * 0.20 +
+    skor_limbah * 0.15
+  );
+
+  return {
+    eco_score_total: +eco_score_total.toFixed(2),
+    skor_air: +skor_air.toFixed(2),
+    skor_pupuk: +skor_pupuk.toFixed(2),
+    skor_pestisida: +skor_pestisida.toFixed(2),
+    skor_energi: +skor_energi.toFixed(2),
+    skor_limbah: +skor_limbah.toFixed(2),
+  };
+};
+
 const FarmerDashboard = () => {
   const { user, refreshUser } = useAuth();
   const [weather, setWeather] = useState<any>(null);
   const [sensorData, setSensorData] = useState<SensorData[]>([]);
   const [pumpStatus, setPumpStatus] = useState(false);
+  const [ecoInput, setEcoInput] = useState({
+  pupuk_digunakan: 0,
+  pestisida_digunakan: 0,
+  energi_kWh: 0,
+  limbah_kg: 0,
+});
+  // Fungsi untuk interpretasi skor Eco-Score
+const interpretEcoScore = (score: number) => {
+  if (score <= 30) {
+    return {
+      category: 'Buruk',
+      description: 'Dampak negatif terhadap lingkungan sangat tinggi.',
+      recommendation: 'Kurangi penggunaan pupuk dan pestisida kimia. Tingkatkan efisiensi penggunaan air dan energi.',
+    };
+  } else if (score <= 60) {
+    return {
+      category: 'Sedang',
+      description: 'Masih ada ruang untuk perbaikan.',
+      recommendation: 'Optimalkan penggunaan sumber daya dan kurangi limbah untuk meningkatkan keberlanjutan.',
+    };
+  } else {
+    return {
+      category: 'Baik',
+      description: 'Praktik pertanian Anda ramah lingkungan.',
+      recommendation: 'Pertahankan praktik ini dan terus tingkatkan efisiensi.',
+    };
+  }
+};
+  // Tambahkan state untuk fitur Smart Mist Sprayer
+const [sprayerStatus, setSprayerStatus] = useState(false); // ON/OFF status
+const [sprayerMode, setSprayerMode] = useState<'manual' | 'auto'>('manual'); // Mode sprayer
+const [humidityTarget, setHumidityTarget] = useState({ min: 60, max: 70 }); // Target kelembapan
+const [sprayHistory, setSprayHistory] = useState<{ date: string; duration: number }[]>([]); // Riwayat penyemprotan
+
+// Logika untuk mode otomatis
+useEffect(() => {
+  const currentHumidity = sensorData.length > 0 ? sensorData[sensorData.length - 1].humidity : null;
+  if (sprayerMode === 'auto' && !sprayerStatus && currentHumidity !== null && currentHumidity < humidityTarget.min) {
+    setSprayerStatus(true); // Aktifkan sprayer
+    const duration = 5; // Durasi penyemprotan (detik)
+    setTimeout(() => {
+      setSprayerStatus(false); // Matikan sprayer setelah durasi
+      setSprayHistory(prev => [
+        ...prev,
+        { date: new Date().toLocaleString(), duration },
+      ]); // Tambahkan ke riwayat
+    }, duration * 1000);
+  }
+}, [sprayerMode, sprayerStatus, sensorData, humidityTarget]);
+
+
   const [chatbotHistory, setChatbotHistory] = useState<{ user: string; bot: string }[]>([]);
   const [chatbotInput, setChatbotInput] = useState('');
   const [isChatbotLoading, setChatbotLoading] = useState(false);
@@ -1154,12 +1256,28 @@ const FarmerDashboard = () => {
     return () => clearInterval(pumpInterval);
   }, [pumpStatus]);
 
-  // Eco-score: random mock generator (A-E)
-  const computeEcoScoreMock = () => {
-    const letters = ['A', 'B', 'C', 'D', 'E'];
-    const sel = letters[Math.floor(Math.random() * letters.length)];
-    setEcoScore(sel);
-  };
+  // Fungsi untuk menghitung Eco-Score berdasarkan data sensor dan input manual
+const computeEcoScore = () => {
+  if (sensorData.length === 0) {
+    alert('Data sensor belum tersedia.');
+    return;
+  }
+
+  const lastSensor = sensorData[sensorData.length - 1];
+  const result = calculateEcoScore({
+  debit_air_L_per_menit: 5, // Debit air lebih realistis
+  durasi_pompa_menit: pumpStatus ? 10 : 0, // Durasi pompa lebih singkat
+  flow_rate_L_per_detik: 0.5, // Flow rate mist sprayer tetap
+  durasi_sprayer_detik: sprayerStatus ? 60 : 0, // Durasi sprayer tetap
+  pupuk_digunakan: ecoInput.pupuk_digunakan,
+  pestisida_digunakan: ecoInput.pestisida_digunakan,
+  energi_kWh: ecoInput.energi_kWh,
+  limbah_kg: ecoInput.limbah_kg,
+});
+
+  setEcoScore(result.eco_score_total.toFixed(2)); // Simpan total Eco-Score
+  console.log('Detail Eco-Score:', result); // Debugging
+};
 
   // Download "report" (mock) as a file (named .pdf for demo, content is plain text)
   const downloadSustainabilityReport = () => {
@@ -1351,17 +1469,23 @@ const FarmerDashboard = () => {
         <p className="mt-4 text-gray-600">Langkah pertama Anda untuk menjadi petani cerdas adalah dengan memiliki perangkat IoT Teman Tani.</p>
         <div className="mt-6 border-t pt-6">
           <h3 className="text-xl font-semibold">Paket Perangkat Tahunan</h3>
-          <p className="text-3xl font-bold my-4">Rp 5.500.000</p>
+          <p className="text-3xl font-bold my-4">Rp 350.000/bulan</p>
           <ul className="text-left max-w-md mx-auto space-y-2 text-gray-600">
+            <li>🌾 Paket Langganan TemanTani – Rp 350.000/bulan.<br></br>
+            💻 Semua kebutuhan pertanian pintar dalam satu paket:</li>
             <li>✓ Sensor Kelembapan Tanah & Suhu</li>
             <li>✓ Pompa irigasi otomatis</li>
+            <li>✓ Automatic Mist System / IoT Fogging Module</li>
             <li>✓ Modul Kontrol Pompa Otomatis</li>
             <li>✓ Garansi Perangkat 1 Tahun</li>
             <li>✓ Akses Penuh ke Dashboard</li>
+            <li>📅 Tanpa biaya awal besar!
+Hanya Rp 350.000 per bulan untuk seluruh solusi IoT pertanian modern.
+Garansi perangkat dan pembaruan software termasuk selama masa langganan.</li>
           </ul>
           <Button onClick={handleDevicePurchase} className="mt-8">Beli dan Pasang Sekarang</Button>
         </div>
-        <PaymentModal isOpen={isPaymentModalOpen} onClose={() => setPaymentModalOpen(false)} onPaymentSuccess={onPaymentSuccess} amount={5500000} />
+        <PaymentModal isOpen={isPaymentModalOpen} onClose={() => setPaymentModalOpen(false)} onPaymentSuccess={onPaymentSuccess} amount={350000} />
       </Card>
     );
   }
@@ -1475,25 +1599,191 @@ const FarmerDashboard = () => {
         )}
       </Card>
 
+      {/* Smart Mist Sprayer Panel */}
+<Card>
+  <h3 className="font-bold text-lg mb-4">Smart Mist Sprayer</h3>
+  <div className="grid grid-cols-2 gap-4 text-center">
+    <div>
+      <p className="text-gray-500">Kelembapan Udara</p>
+      <p className="text-3xl font-bold">
+  {sensorData.length > 0 ? sensorData[sensorData.length - 1].humidity.toFixed(1) : '-'}%
+</p>
+    </div>
+    <div>
+      <p className="text-gray-500">Status Sprayer</p>
+      <p className={`text-lg font-semibold ${sprayerStatus ? 'text-green-600' : 'text-gray-500'}`}>
+        {sprayerStatus ? 'Aktif' : 'Tidak Aktif'}
+      </p>
+    </div>
+  </div>
+
+  {/* Mode dan Kontrol */}
+  <div className="mt-4">
+    <label className="block text-sm font-medium text-gray-700">Mode Sprayer</label>
+    <select
+      value={sprayerMode}
+      onChange={e => setSprayerMode(e.target.value as 'manual' | 'auto')}
+      className="mt-1 block w-full px-3 py-2 border rounded-md"
+    >
+      <option value="manual">Manual</option>
+      <option value="auto">Otomatis</option>
+    </select>
+  </div>
+
+  {/* Target Kelembapan */}
+  {sprayerMode === 'auto' && (
+    <div className="mt-4">
+      <label className="block text-sm font-medium text-gray-700">Target Kelembapan (%)</label>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          value={humidityTarget.min}
+          onChange={e => setHumidityTarget(prev => ({ ...prev, min: +e.target.value }))}
+          className="w-full px-3 py-2 border rounded-md"
+          placeholder="Min"
+        />
+        <input
+          type="number"
+          value={humidityTarget.max}
+          onChange={e => setHumidityTarget(prev => ({ ...prev, max: +e.target.value }))}
+          className="w-full px-3 py-2 border rounded-md"
+          placeholder="Max"
+        />
+      </div>
+    </div>
+  )}
+
+  {/* Tombol Manual */}
+  {sprayerMode === 'manual' && (
+    <div className="mt-4 flex items-center justify-center space-x-4">
+      <span className={`text-lg font-semibold ${sprayerStatus ? 'text-green-600' : 'text-gray-500'}`}>
+        {sprayerStatus ? 'NYALA' : 'MATI'}
+      </span>
+      <button
+        onClick={() => setSprayerStatus(prev => !prev)}
+        className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
+          sprayerStatus ? 'bg-green-600' : 'bg-gray-200'
+        }`}
+      >
+        <span
+          className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${
+            sprayerStatus ? 'translate-x-6' : 'translate-x-1'
+          }`}
+        />
+      </button>
+    </div>
+  )}
+
+  {/* Riwayat Penyemprotan */}
+  <div className="mt-6">
+    <h4 className="font-semibold text-lg mb-2">Riwayat Penyemprotan</h4>
+    <ul className="space-y-2 text-sm text-gray-600">
+      {sprayHistory.length > 0 ? (
+        sprayHistory.map((entry, index) => (
+          <li key={index} className="flex justify-between">
+            <span>{entry.date}</span>
+            <span>{entry.duration} detik</span>
+          </li>
+        ))
+      ) : (
+        <li className="text-gray-400">Belum ada riwayat.</li>
+      )}
+    </ul>
+  </div>
+</Card>
+
       {/* Eco-Score */}
-      <Card>
-        <h3 className="font-bold text-lg mb-4">Eco-Score Keberlanjutan</h3>
-        {ecoScore ? (
-          <div className="text-center">
-            <p className="text-5xl font-bold text-green-600">{ecoScore}</p>
-            <p className="text-sm text-gray-600 mt-2">Skor dihitung berdasarkan data LCA (mock).</p>
-            <div className="mt-4 flex justify-center gap-2">
-              <Button onClick={() => setEcoScore(null)} variant="secondary">Reset</Button>
-              <Button onClick={downloadSustainabilityReport}>Unduh Laporan Keberlanjutan (PDF)</Button>
-            </div>
+<Card>
+  <h3 className="font-bold text-lg mb-4">Eco-Score Keberlanjutan</h3>
+  {ecoScore ? (
+    <div className="text-center">
+      <p className="text-5xl font-bold text-green-600">{ecoScore}</p>
+      <p className="text-sm text-gray-600 mt-2">Skor dihitung berdasarkan data LCA.</p>
+
+      {/* Interpretasi Skor */}
+      {(() => {
+        const { category, description, recommendation } = interpretEcoScore(Number(ecoScore));
+        return (
+          <div className="mt-4 text-left">
+            <p className="text-lg font-semibold">Interpretasi: <span className="text-green-600">{category}</span></p>
+            <p className="text-sm text-gray-600 mt-2">{description}</p>
+            <p className="text-sm text-gray-600 mt-2"><strong>Rekomendasi:</strong> {recommendation}</p>
           </div>
-        ) : (
-          <div className="text-center">
-            <p className="text-sm text-gray-500 mb-4">Hitung Eco-Score untuk melihat laporan keberlanjutan.</p>
-            <Button onClick={computeEcoScoreMock}>Hitung Eco-Score</Button>
-          </div>
-        )}
-      </Card>
+        );
+      })()}
+
+      <div className="mt-4 flex justify-center gap-2">
+        <Button onClick={() => setEcoScore(null)} variant="secondary">Reset</Button>
+        <Button onClick={downloadSustainabilityReport}>Unduh Laporan Keberlanjutan (PDF)</Button>
+      </div>
+    </div>
+  ) : (
+    <div className="text-center">
+      <p className="text-sm text-gray-500 mb-4">Hitung Eco-Score untuk melihat laporan keberlanjutan.</p>
+      <Button onClick={computeEcoScore}>Hitung Eco-Score</Button>
+    </div>
+  )}
+
+{/* Input Manual untuk Eco-Score */}
+<div className="mt-4">
+  <h4 className="font-semibold text-lg mb-2">Input Manual</h4>
+  <div className="grid grid-cols-2 gap-4">
+    <div>
+      <label className="block text-sm text-gray-600">Pupuk (kg/hari)</label>
+      <input
+        type="number"
+        step="any"
+        value={ecoInput.pupuk_digunakan}
+        onChange={e => {
+          const value = e.target.value.replace(',', '.'); // Ganti koma dengan titik
+          setEcoInput(prev => ({ ...prev, pupuk_digunakan: parseFloat(value) || 0 }));
+        }}
+        className="w-full px-3 py-2 border rounded-md"
+      />
+    </div>
+    <div>
+      <label className="block text-sm text-gray-600">Pestisida (kg/hari)</label>
+      <input
+        type="number"
+        step="any"
+        value={ecoInput.pestisida_digunakan}
+        onChange={e => {
+          const value = e.target.value.replace(',', '.'); // Ganti koma dengan titik
+          setEcoInput(prev => ({ ...prev, pestisida_digunakan: parseFloat(value) || 0 }));
+        }}
+        className="w-full px-3 py-2 border rounded-md"
+      />
+    </div>
+    <div>
+      <label className="block text-sm text-gray-600">Energi (kWh/hari)</label>
+      <input
+        type="number"
+        step="any"
+        value={ecoInput.energi_kWh}
+        onChange={e => {
+          const value = e.target.value.replace(',', '.'); // Ganti koma dengan titik
+          setEcoInput(prev => ({ ...prev, energi_kWh: parseFloat(value) || 0 }));
+        }}
+        className="w-full px-3 py-2 border rounded-md"
+      />
+    </div>
+    <div>
+      <label className="block text-sm text-gray-600">Limbah (kg/hari)</label>
+      <input
+        type="number"
+        step="any"
+        value={ecoInput.limbah_kg}
+        onChange={e => {
+          const value = e.target.value.replace(',', '.'); // Ganti koma dengan titik
+          setEcoInput(prev => ({ ...prev, limbah_kg: parseFloat(value) || 0 }));
+        }}
+        className="w-full px-3 py-2 border rounded-md"
+      />
+    </div>
+  </div>
+  <Button onClick={computeEcoScore} className="mt-4">Hitung Eco-Score</Button>
+</div>
+</Card>
 
       {/* Forecast AI */}
       <Card className="lg:col-span-3">
