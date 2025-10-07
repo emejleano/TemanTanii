@@ -82,6 +82,22 @@ export interface SensorData {
   timestamp: Date;
   humidity: number;
   temperature: number;
+  soilMoisture: number;  // percentage (0-100)
+  soilTemperature: number; // celsius
+}
+
+export interface IrrigationStatus {
+  isAutoMode: boolean;
+  isPumpActive: boolean;
+  lastActivation: Date;
+  nextScheduledCheck: Date;
+}
+
+export interface IrrigationThresholds {
+  minSoilMoisture: number;  // minimum soil moisture percentage
+  maxSoilMoisture: number;  // maximum soil moisture percentage
+  optimalSoilTemperature: number;  // optimal soil temperature in celsius
+  temperatureThreshold: number;  // temperature threshold for irrigation
 }
 
 export interface ChatMessage {
