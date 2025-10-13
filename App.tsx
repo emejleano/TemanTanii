@@ -31,7 +31,8 @@ interface RegisterPayload {
     nik: string;
     domicile: string;
     age: number;
-}
+};
+
 interface AuthContextType {
   user: User | null;
   login: (email: string, pass: string) => Promise<boolean>;
@@ -625,7 +626,14 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div className="flex-1 flex flex-col overflow-hidden">
                  <header className="bg-white shadow-sm">
                     <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                        <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
+                        <h1 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                          <img
+                            src="https://emejleano.github.io/TemanTanii/logo.png"
+                            alt="Logo Teman Tani"
+                            className="h-20 w-20"
+                          />
+                          <span>Dashboard</span>
+                        </h1>
                         <Button onClick={logout} variant="secondary">Logout</Button>
                     </div>
                 </header>
@@ -1072,13 +1080,18 @@ const FarmerDashboard = () => {
   const { user, refreshUser } = useAuth();
   const [weather, setWeather] = useState<any>(null);
   const [sensorData, setSensorData] = useState<SensorData[]>([]);
+  const [subscriptionPlan, setSubscriptionPlan] = useState<string>(() => localStorage.getItem('ttm_plan') || 'standard');
   const [pumpStatus, setPumpStatus] = useState(false);
-  const [ecoInput, setEcoInput] = useState({
+  const [isAutoPumpMode, setIsAutoPumpMode] = useState<boolean>(false);
+const [soilTemp, setSoilTemp] = useState<number>(28.0);
+const [pumpLogs, setPumpLogs] = useState<{ time: string; message: string }[]>([]);
+const [ecoInput, setEcoInput] = useState({
   pupuk_digunakan: 0,
   pestisida_digunakan: 0,
   energi_kWh: 0,
   limbah_kg: 0,
 });
+const [pestLogs, setPestLogs] = useState<{ time: string; message: string }[]>([]); // Initialize pestLogs
   // Fungsi untuk interpretasi skor Eco-Score
 const interpretEcoScore = (score: number) => {
   if (score <= 30) {
@@ -1103,6 +1116,7 @@ const interpretEcoScore = (score: number) => {
 };
   // Tambahkan state untuk fitur Smart Mist Sprayer
 const [sprayerStatus, setSprayerStatus] = useState(false); // ON/OFF status
+const [pestSensorOn, setPestSensorOn] = useState(false); // ON/OFF status for pest sensor
 const [sprayerMode, setSprayerMode] = useState<'manual' | 'auto'>('manual'); // Mode sprayer
 const [humidityTarget, setHumidityTarget] = useState({ min: 60, max: 70 }); // Target kelembapan
 const [sprayHistory, setSprayHistory] = useState<{ date: string; duration: number }[]>([]); // Riwayat penyemprotan
@@ -1122,8 +1136,31 @@ useEffect(() => {
     }, duration * 1000);
   }
 }, [sprayerMode, sprayerStatus, sensorData, humidityTarget]);
+  // Simulasi suhu tanah setiap 7 detik (random walk)
+useEffect(() => {
+  if (sensorData.length > 0) {
+    setSoilTemp(sensorData[sensorData.length - 1].temperature);
+  }
+}, [sensorData]);
 
+// Auto control dengan hysteresis: ON > 30°C, OFF < 27°C
+useEffect(() => {
+  if (!isAutoPumpMode) return;
 
+  if (!pumpStatus && soilTemp > 30) {
+    setPumpStatus(true);
+    setPumpLogs(prev => [
+      { time: new Date().toLocaleString(), message: `Pompa menyala karena suhu ${soilTemp.toFixed(1)}°C` },
+      ...prev,
+    ].slice(0, 50));
+  } else if (pumpStatus && soilTemp < 27) {
+    setPumpStatus(false);
+    setPumpLogs(prev => [
+      { time: new Date().toLocaleString(), message: `Pompa mati karena suhu ${soilTemp.toFixed(1)}°C` },
+      ...prev,
+    ].slice(0, 50));
+  }
+}, [isAutoPumpMode, soilTemp, pumpStatus, setPumpStatus]);
   const [chatbotHistory, setChatbotHistory] = useState<{ user: string; bot: string }[]>([]);
   const [chatbotInput, setChatbotInput] = useState('');
   const [isChatbotLoading, setChatbotLoading] = useState(false);
@@ -1209,12 +1246,21 @@ useEffect(() => {
   };
 
   // Device purchase flow
-  const handleDevicePurchase = () => setPaymentModalOpen(true);
-  const onPaymentSuccess = async () => {
-    if (!user) return;
-    await mockApiService.purchaseDevice(user.id, user.name);
-    refreshUser();
-  };
+  const [selectedPlan, setSelectedPlan] = useState<'standard'|'premium'>('standard');
+const [selectedPlanAmount, setSelectedPlanAmount] = useState<number>(350000);
+
+const handleDevicePurchase = (plan: 'standard'|'premium') => {
+  setSelectedPlan(plan);
+  setSelectedPlanAmount(plan === 'premium' ? 450000 : 350000);
+  setPaymentModalOpen(true);
+};
+
+const onPaymentSuccess = async () => {
+  if (!user) return;
+  await mockApiService.purchaseDevice(user.id, user.name);
+  localStorage.setItem('ttm_plan', selectedPlan); // simpan paket
+  await refreshUser();
+};
 
   // Connect device with loading simulation
   const handleConnectDevice = async () => {
@@ -1463,32 +1509,48 @@ const computeEcoScore = () => {
   if (!user || !user.farmerStatus) return <Spinner />;
 
   if (user.farmerStatus === FarmerStatus.REGISTERED) {
-    return (
-      <Card className="text-center">
-        <h2 className="text-2xl font-bold">Selamat Datang, Petani {user.name}!</h2>
-        <p className="mt-4 text-gray-600">Langkah pertama Anda untuk menjadi petani cerdas adalah dengan memiliki perangkat IoT Teman Tani.</p>
-        <div className="mt-6 border-t pt-6">
-          <h3 className="text-xl font-semibold">Paket Perangkat Tahunan</h3>
-          <p className="text-3xl font-bold my-4">Rp 350.000/bulan</p>
-          <ul className="text-left max-w-md mx-auto space-y-2 text-gray-600">
-            <li>🌾 Paket Langganan TemanTani – Rp 350.000/bulan.<br></br>
-            💻 Semua kebutuhan pertanian pintar dalam satu paket:</li>
-            <li>✓ Sensor Kelembapan Tanah & Suhu</li>
-            <li>✓ Pompa irigasi otomatis</li>
-            <li>✓ Automatic Mist System / IoT Fogging Module</li>
-            <li>✓ Modul Kontrol Pompa Otomatis</li>
-            <li>✓ Garansi Perangkat 1 Tahun</li>
-            <li>✓ Akses Penuh ke Dashboard</li>
-            <li>📅 Tanpa biaya awal besar!
-Hanya Rp 350.000 per bulan untuk seluruh solusi IoT pertanian modern.
-Garansi perangkat dan pembaruan software termasuk selama masa langganan.</li>
+  return (
+    <Card className="text-center">
+      <h2 className="text-2xl font-bold">Selamat Datang, Petani {user.name}!</h2>
+      <p className="mt-4 text-gray-600">Pilih paket berlangganan perangkat IoT Teman Tani:</p>
+
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Paket Standard */}
+        <div className="p-4 border rounded-lg text-left">
+          <h3 className="text-xl font-semibold">Paket Standard</h3>
+          <p className="text-2xl font-bold mt-1">Rp 350.000/bulan</p>
+          <ul className="mt-3 text-sm text-gray-600 list-disc pl-5 space-y-1">
+            <li>Sensor tanah (kelembapan & suhu)</li>
+            <li>Pompa irigasi otomatis</li>
+            <li>Smart Mist Sprayer</li>
+            <li>Eco-Score</li>
+            <li>AI Forecasting</li>
+            <li>Marketplace</li>
           </ul>
-          <Button onClick={handleDevicePurchase} className="mt-8">Beli dan Pasang Sekarang</Button>
+          <Button className="mt-4 w-full" onClick={() => handleDevicePurchase('standard')}>Pilih Paket Standard</Button>
         </div>
-        <PaymentModal isOpen={isPaymentModalOpen} onClose={() => setPaymentModalOpen(false)} onPaymentSuccess={onPaymentSuccess} amount={350000} />
-      </Card>
-    );
-  }
+
+        {/* Paket Premium */}
+        <div className="p-4 border rounded-lg text-left">
+          <h3 className="text-xl font-semibold">Paket Premium</h3>
+          <p className="text-2xl font-bold mt-1">Rp 450.000/bulan</p>
+          <ul className="mt-3 text-sm text-gray-600 list-disc pl-5 space-y-1">
+            <li>Semua fitur Paket Standard</li>
+            <li>+ Deteksi & Usir Hama Otomatis (ultrasonik)</li>
+          </ul>
+          <Button className="mt-4 w-full" onClick={() => handleDevicePurchase('premium')}>Pilih Paket Premium</Button>
+        </div>
+      </div>
+
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setPaymentModalOpen(false)}
+        onPaymentSuccess={onPaymentSuccess}
+        amount={selectedPlanAmount}
+      />
+    </Card>
+  );
+ }
 
   if ([FarmerStatus.PENDING_PAYMENT, FarmerStatus.PENDING_SHIPMENT, FarmerStatus.SHIPPING, FarmerStatus.DELIVERED].includes(user.farmerStatus)) {
     const statuses = [FarmerStatus.PENDING_SHIPMENT, FarmerStatus.SHIPPING, FarmerStatus.DELIVERED, FarmerStatus.ACTIVE];
@@ -1503,7 +1565,7 @@ Garansi perangkat dan pembaruan software termasuk selama masa langganan.</li>
                 {index <= currentStatusIndex && <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>}
               </span>
               <h3 className={`font-semibold ${index <= currentStatusIndex ? 'text-gray-900' : 'text-gray-400'}`}>{status}</h3>
-              <p className="text-sm text-gray-500">Menunggu konfirmasi dari tim kami.</p>
+              <p className="text-sm text-gray-500 mt-1">Menunggu konfirmasi dari tim kami.</p>
             </li>
           ))}
         </ol>
@@ -1586,18 +1648,80 @@ Garansi perangkat dan pembaruan software termasuk selama masa langganan.</li>
       {/* Pump Control */}
       <Card>
         <h3 className="font-bold text-lg mb-4">Kontrol Pompa Irigasi</h3>
-        <div className="flex items-center justify-center space-x-4">
-          <span className={`text-lg font-semibold ${pumpStatus ? 'text-green-600' : 'text-gray-500'}`}>{pumpStatus ? 'NYALA' : 'MATI'}</span>
-          <button onClick={() => setPumpStatus(prev => !prev)} disabled={user.farmerStatus !== FarmerStatus.DEVICE_ONLINE} className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${pumpStatus ? 'bg-green-600' : 'bg-gray-200'}`}>
-            <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${pumpStatus ? 'translate-x-6' : 'translate-x-1'}`} />
-          </button>
-        </div>
-        {pumpStatus && (
-          <p className="text-sm text-blue-600 mt-2">
-            Debit air: {(10 + Math.random() * 5).toFixed(2)} L/menit
-          </p>
-        )}
-      </Card>
+
+  {/* Row status suhu + status pompa */}
+  <div className="grid grid-cols-2 gap-4">
+    <div className="p-3 rounded-md border">
+      <p className="text-sm text-gray-500">Suhu Tanah (real-time)</p>
+<p className="text-3xl font-bold">
+  {sensorData.length > 0 ? sensorData[sensorData.length - 1].temperature.toFixed(1) : soilTemp.toFixed(1)}°C
+</p>
+    </div>
+    <div className="p-3 rounded-md border">
+      <p className="text-sm text-gray-500">Status Pompa</p>
+      <div className="mt-1 inline-flex items-center gap-2">
+        <span className={`inline-block w-2.5 h-2.5 rounded-full ${pumpStatus ? 'bg-green-500' : 'bg-red-400'}`} />
+        <span className={`text-lg font-semibold ${pumpStatus ? 'text-green-700' : 'text-gray-600'}`}>
+          {pumpStatus ? 'Aktif (ON)' : 'Nonaktif (OFF)'}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  {/* Mode switch */}
+  <div className="mt-4">
+    <label className="block text-sm font-medium text-gray-700 mb-1">Mode Pompa</label>
+    <div className="flex items-center gap-3">
+      <span className="text-sm text-gray-600">{isAutoPumpMode ? 'Otomatis' : 'Manual'}</span>
+      <button
+        type="button"
+        onClick={() => setIsAutoPumpMode(v => !v)}
+        className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors ${isAutoPumpMode ? 'bg-green-600' : 'bg-gray-300'}`}
+        title="Toggle Manual/Otomatis"
+      >
+        <span
+          className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${isAutoPumpMode ? 'translate-x-6' : 'translate-x-1'}`}
+        />
+      </button>
+      <span className="text-xs text-gray-500">Otomatis: ON {'>'} 30°C, OFF {'<'} 27°C</span>
+    </div>
+  </div>
+
+  {/* Kontrol manual */}
+  <div className="mt-4">
+    <p className="text-sm text-gray-600 mb-2">Kontrol Manual</p>
+    <div className="flex items-center gap-3">
+      <Button
+        onClick={() => setPumpStatus(s => !s)}
+        disabled={isAutoPumpMode}
+        variant={pumpStatus ? 'secondary' : 'primary'}
+        className={`${isAutoPumpMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+        title={isAutoPumpMode ? 'Nonaktifkan mode otomatis untuk mengontrol manual' : 'Toggle pompa'}
+      >
+        {pumpStatus ? 'Matikan Pompa' : 'Nyalakan Pompa'}
+      </Button>
+      {isAutoPumpMode && <span className="text-xs text-gray-500">Matikan mode otomatis untuk kontrol manual.</span>}
+    </div>
+  </div>
+
+  {/* Riwayat otomatis */}
+  <div className="mt-6">
+    <h4 className="font-semibold">Riwayat Otomatis</h4>
+    <ul className="mt-2 max-h-40 overflow-auto space-y-2 text-sm text-gray-700">
+      {pumpLogs.length === 0 ? (
+        <li className="text-gray-400">Belum ada aktivitas otomatis.</li>
+      ) : (
+        pumpLogs.map((l, i) => (
+          <li key={i} className="flex justify-between gap-4">
+            <span>{l.message}</span>
+            <span className="whitespace-nowrap text-gray-500">{l.time}</span>
+          </li>
+        ))
+      )
+      }
+    </ul>
+  </div>
+</Card>
 
       {/* Smart Mist Sprayer Panel */}
 <Card>
@@ -1689,6 +1813,70 @@ Garansi perangkat dan pembaruan software termasuk selama masa langganan.</li>
         <li className="text-gray-400">Belum ada riwayat.</li>
       )}
     </ul>
+  </div>
+</Card>
+
+{/* Deteksi & Usir Hama Otomatis (Premium) */}
+<Card>
+  <div className="flex items-center justify-between mb-4">
+    <h3 className="font-bold text-lg">Deteksi & Usir Hama</h3>
+    <span className="text-xs px-2 py-0.5 rounded-full border">Paket: {localStorage.getItem('ttm_plan') === 'premium' ? 'Premium' : 'Standard'}</span>
+  </div>
+
+  <div className="grid grid-cols-2 gap-4">
+    <div className="p-3 rounded-md border">
+      <p className="text-sm text-gray-500">Status Sensor</p>
+      <div className="mt-1 inline-flex items-center gap-2">
+        <span className={`inline-block w-2.5 h-2.5 rounded-full ${subscriptionPlan==='premium' && pestSensorOn ? 'bg-green-500' : 'bg-red-400'}`} />
+        <span className={`text-lg font-semibold ${subscriptionPlan==='premium' && pestSensorOn ? 'text-green-700' : 'text-gray-600'}`}>
+          {subscriptionPlan==='premium' && pestSensorOn ? 'Aktif' : 'Nonaktif'}
+        </span>
+      </div>
+    </div>
+    <div className="p-3 rounded-md border">
+      <p className="text-sm text-gray-500">Kontrol Sensor</p>
+      <div className="mt-2 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setPestSensorOn(v => !v)}
+          disabled={subscriptionPlan !== 'premium'}
+          className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors ${subscriptionPlan==='premium' && pestSensorOn ? 'bg-green-600' : 'bg-gray-300'} ${subscriptionPlan!=='premium' ? 'opacity-50 cursor-not-allowed' : ''}`}
+          title={subscriptionPlan==='premium' ? 'Toggle sensor' : 'Upgrade ke Premium untuk mengaktifkan'}
+        >
+          <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${subscriptionPlan==='premium' && pestSensorOn ? 'translate-x-6' : 'translate-x-1'}`} />
+        </button>
+
+        {subscriptionPlan !== 'premium' && (
+          <Button variant="secondary" onClick={() => { setSubscriptionPlan('premium'); localStorage.setItem('ttm_plan', 'premium'); }}>
+            Upgrade ke Premium
+          </Button>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div className="mt-6">
+    <h4 className="font-semibold">Riwayat Deteksi</h4>
+<ul className="mt-2 max-h-40 overflow-auto space-y-2 text-sm text-gray-700">
+  {pestLogs.length === 0 ? (
+    <li className="text-gray-400">Belum ada deteksi.</li>
+  ) : (
+    pestLogs.map((l, i) => (
+      <li key={i} className="flex justify-between gap-4">
+        <span>{l.message}</span>
+        <span className="whitespace-nowrap text-gray-500">{l.time}</span>
+      </li>
+    ))
+  )}
+</ul>
+  </div>
+
+  <div className="mt-4 text-sm">
+    {subscriptionPlan !== 'premium' ? (
+      <p className="text-gray-600">🔒 Fitur ini hanya tersedia di Paket Premium (Rp 450.000/bulan)</p>
+    ) : (
+      <p className="text-gray-600">Deteksi terakhir: {'-'}</p>
+    )}
   </div>
 </Card>
 
@@ -1848,7 +2036,7 @@ Garansi perangkat dan pembaruan software termasuk selama masa langganan.</li>
     <Card>
       <h2 className="text-xl font-bold mb-4">Manajemen Produk Marketplace</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="md:col-span-1 border p-4 rounded-md">
           <h3 className="font-semibold mb-2">{editingProduct ? 'Edit Produk' : 'Tambah Produk Baru'}</h3>
           <label className="block text-sm text-gray-600">Nama</label>
@@ -2086,12 +2274,12 @@ const BuyerDashboard = () => {
                 {orders.length > 0 ? orders.map(order => (
                     <div key={order.orderId} className="p-4 border rounded-lg">
                         <div className="flex justify-between items-start">
-                            <div>
-                                <p className="font-semibold">Pesanan: {order.items[0].productName}</p>
-                                <p className="text-sm text-gray-500">ID Pesanan: {order.orderId}</p>
-                                <p className="text-sm text-gray-500">{new Date(order.orderDate).toLocaleString()}</p>
-                            </div>
-                            <StatusBadge status={order.status} />
+                          <div>
+                            <p className="font-semibold">Pesanan: {order.items[0].productName}</p>
+                            <p className="text-sm text-gray-500">ID Pesanan: {order.orderId}</p>
+                            <p className="text-sm text-gray-500">{new Date(order.orderDate).toLocaleString()}</p>
+                          </div>
+                          <StatusBadge status={order.status} />
                         </div>
                     </div>
                 )) : <p>Anda belum melakukan pembelian.</p>}
