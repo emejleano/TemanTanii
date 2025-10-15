@@ -3,6 +3,7 @@ import { User, Role, FarmerStatus, Product, Article, DevicePurchase, SensorData,
 import { mockApiService, weatherService, chatbotService } from './services';
 import { Button, Card, Input, Modal, Spinner, IconLeaf, IconSun, IconDrop, IconChat, StatusBadge } from './components';
 
+
 // --- ROUTER HOOK ---
 const useHashRouter = () => {
     const [hash, setHash] = useState(window.location.hash);
@@ -190,44 +191,90 @@ return (
 };
 
 const Footer = () => (
-    <footer className="bg-gray-100" id="contact">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-            <div className="xl:grid xl:grid-cols-3 xl:gap-8">
-                <div className="space-y-8 xl:col-span-1">
-                     <div className="flex-shrink-0 flex items-center">
-                        <img src="https://emejleano.github.io/TemanTanii/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
-                        <span className="ml-2 text-xl font-bold text-green-700">Teman Tani</span>
-                    </div>
-                    <p className="text-gray-500 text-base">
-                        Memodernisasi pertanian Indonesia dengan teknologi cerdas.
-                    </p>
-                </div>
-                <div className="mt-12 grid grid-cols-2 gap-8 xl:mt-0 xl:col-span-2">
-                    <div className="md:grid md:grid-cols-2 md:gap-8">
-                        <div>
-                            <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Solusi</h3>
-                            <ul className="mt-4 space-y-4">
-                                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">IoT Monitoring</a></li>
-                                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Marketplace</a></li>
-                                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Analitik AI</a></li>
-                            </ul>
-                        </div>
-                        <div className="mt-12 md:mt-0">
-                            <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Legal</h3>
-                            <ul className="mt-4 space-y-4">
-                                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Privacy</a></li>
-                                <li><a href="#" className="text-base text-gray-500 hover:text-gray-900">Terms</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="mt-12 border-t border-gray-200 pt-8">
-                <p className="text-base text-gray-400 xl:text-center">&copy; 2024 Teman Tani. All rights reserved.</p>
-            </div>
+  <footer className="bg-green-800 text-gray-100" id="contact">
+    <div className="max-w-7xl mx-auto py-12 px-6 lg:px-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        {/* Logo & Deskripsi */}
+        <div className="space-y-4">
+          <div className="flex items-center">
+            <img
+              src="https://emejleano.github.io/TemanTanii/logo.png"
+              alt="Logo Teman Tani"
+              className="h-12 w-12 object-contain"
+            />
+            <span className="ml-2 text-2xl font-bold text-white">Teman Tani</span>
+          </div>
+          <p className="text-gray-300 text-sm leading-relaxed">
+            Memodernisasi pertanian Indonesia dengan teknologi cerdas — membantu petani
+            mengelola lahan, prediksi panen, dan pemasaran hasil dengan efisien.
+          </p>
         </div>
-    </footer>
+
+        {/* Navigasi */}
+        <div className="grid grid-cols-2 gap-8 md:col-span-1">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-200 tracking-wider uppercase">
+              Solusi
+            </h3>
+            <ul className="mt-4 space-y-3">
+              <li>
+                <a href="#features" className="text-gray-300 hover:text-white transition">
+                  IoT Monitoring
+                </a>
+              </li>
+              <li>
+                <a href="#features" className="text-gray-300 hover:text-white transition">
+                  Marketplace
+                </a>
+              </li>
+              <li>
+                <a href="#features" className="text-gray-300 hover:text-white transition">
+                  Analitik AI
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold text-gray-200 tracking-wider uppercase">
+              Legal
+            </h3>
+            <ul className="mt-4 space-y-3">
+              <li>
+                <a href="#" className="text-gray-300 hover:text-white transition">
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-300 hover:text-white transition">
+                  Terms of Service
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Kontak */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-gray-200 tracking-wider uppercase">
+            Kontak Kami
+          </h3>
+          <p className="text-gray-300 text-sm">Cilegon, Banten, Indonesia</p>
+          <p className="text-gray-300 text-sm">📞 +62 981 234 567</p>
+          <p className="text-gray-300 text-sm">✉️ temantani@gmail.com</p>
+        </div>
+      </div>
+
+      {/* Garis bawah */}
+      <div className="mt-10 border-t border-gray-700 pt-6 text-center">
+        <p className="text-sm text-gray-300">
+          &copy; 2025 Teman Tani. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </footer>
 );
+
 
 // --- Reusable Payment Modal ---
 const PaymentModal: React.FC<{ isOpen: boolean; onClose: () => void; onPaymentSuccess: () => void; amount: number; }> = ({ isOpen, onClose, onPaymentSuccess, amount }) => {
@@ -389,103 +436,330 @@ const ChatBox: React.FC<{
     );
 };
 
-// --- PAGES & DASHBOARDS ---
 const HomePage = () => (
-  <>
-    <main>
-      {/* Hero Section */}
-      <div className="relative bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
-            <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
-              <div className="sm:text-center lg:text-left">
-                <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-                  <span className="block xl:inline">Pertanian Cerdas untuk</span>{' '}
-                  <span className="block text-green-600 xl:inline">Masa Depan Indonesia</span>
-                </h1>
-                <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                  Teman Tani adalah platform revolusioner yang mengintegrasikan IoT, AI, dan marketplace untuk membantu petani meningkatkan hasil panen dan profitabilitas.
-                </p>
-                <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                  <div className="rounded-md shadow">
-                     <Button onClick={() => window.location.hash = '/register'} variant="primary">Mulai Sekarang</Button>
-                  </div>
-                </div>
-              </div>
-            </main>
-          </div>
-        </div>
-        <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-          <img className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full" src="https://i.pinimg.com/1200x/62/d8/1d/62d81d5394fdff21d07134d422fdb0d8.jpg" alt="Farmer in a field" />
-        </div>
-      </div>
+  <main className="bg-white text-gray-800 font-sans scroll-smooth">
+    {/* Hero Section */}
+    <section
+      className="relative h-[90vh] flex flex-col justify-center bg-cover bg-center text-white"
+      style={{
+        backgroundImage:
+          "url('https://i.pinimg.com/1200x/62/d8/1d/62d81d5394fdff21d07134d422fdb0d8.jpg')",
+      }}
+    >
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
+{/* Logo */}
+<div className="absolute top-8 left-8 z-20">
+  <img
+    src="https://emejleano.github.io/TemanTanii/logo.png"
+    alt="Teman Tani Logo"
+    className="h-30px w-30px object-contain"
+  />
+</div>
 
-      {/* About Section */}
-       <div id="about" className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center">
-            <h2 className="text-base text-green-600 font-semibold tracking-wide uppercase">Tentang Kami</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              Misi Kami untuk Petani
-            </p>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-              Kami percaya bahwa teknologi dapat menjadi sahabat terbaik petani. Misi kami adalah menyediakan alat yang mudah digunakan, data yang akurat, dan akses pasar yang lebih luas untuk setiap petani di Indonesia.
-            </p>
-          </div>
-        </div>
-      </div>
+{/* Hero Content */}
+<div className="relative z-10 max-w-2xl px-8 md:px-20 mt-12 md:mt-16">
+  <h1 className="text-6xl font-extrabold leading-tight">
+     
+  </h1>
+  <h2 className="text-6xl font-extrabold text-green-400">
+    Smart Farmer
+  </h2>
+  <p className="mt-6 text-lg text-gray-100 max-w-lg leading-relaxed">
+    Pantau lahan, kelola penyiraman, dan prediksi hasil panen dengan mudah,
+    kapan saja dan di mana saja.
+  </p>
+  <div className="mt-8">
+    <Button
+      variant="primary"
+      onClick={() =>
+        document.getElementById('tentang-kami')?.scrollIntoView({ behavior: 'smooth' })
+      }
+      className="px-8 py-3 text-lg rounded-lg shadow-lg"
+    >
+      Discover More
+    </Button>
+  </div>
+</div>
+    </section>
 
-      {/* Features Section */}
-      <div id="features" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center">
-            <h2 className="text-base text-green-600 font-semibold tracking-wide uppercase">Fitur Unggulan</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              Semua yang Anda Butuhkan
-            </p>
-          </div>
-          <div className="mt-10">
-            <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10">
-              <div className="relative">
-                <dt>
-                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
-                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  </div>
-                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Monitoring IoT</p>
-                </dt>
-                <dd className="mt-2 ml-16 text-base text-gray-500">
-                  Pantau kondisi lahan Anda secara real-time, dari kelembapan tanah hingga suhu, langsung dari dashboard.
-                </dd>
-              </div>
-              <div className="relative">
-                <dt>
-                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
-                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
-                  </div>
-                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Rekomendasi AI</p>
-                </dt>
-                <dd className="mt-2 ml-16 text-base text-gray-500">
-                  Dapatkan saran cerdas dari AI kami untuk waktu penyiraman, pemupukan, dan prediksi panen.
-                </dd>
-              </div>
-              <div className="relative">
-                <dt>
-                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
-                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                  </div>
-                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Marketplace Hasil Panen</p>
-                </dt>
-                <dd className="mt-2 ml-16 text-base text-gray-500">
-                  Jual hasil panen Anda langsung ke pembeli tanpa perantara, dengan harga yang lebih baik.
-                </dd>
-              </div>
-            </dl>
+    {/* Mission Section (Tentang Kami) */}
+    <section id="tentang-kami" className="bg-white py-24 px-8 text-center">
+      <div className="max-w-4xl mx-auto">
+        <h2 className="text-3xl font-bold text-green-700 uppercase tracking-wide">
+          Our Mission
+        </h2>
+        <p className="mt-8 text-gray-700 text-lg leading-relaxed">
+          Di Teman Tani, kami meyakini bahwa solusi bagi tantangan pangan global
+          berawal dari pemberdayaan petani lokal. Misi kami adalah menjembatani
+          kesenjangan antara pertanian tradisional dan era digital, sehingga petani
+          dapat mengakses inovasi tanpa meninggalkan kearifan lokal mereka.
+        </p>
+      </div>
+    </section>
+
+    {/* Solution Section */}
+<section className="bg-gray-50 py-24 px-8" id="features">
+  <div className="max-w-7xl mx-auto text-center">
+    <h2 className="text-3xl font-bold text-green-700 uppercase tracking-wide">
+      Our Solution
+    </h2>
+
+    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      {[
+        [
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-green-600">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 2.25c4.28 0 7.75 3.47 7.75 7.75 0 3.347-2.066 6.16-5.25 7.292V21a.75.75 0 01-1.5 0v-3.708A7.756 7.756 0 014.25 10c0-4.28 3.47-7.75 7.75-7.75z" />
+          </svg>,
+          'Smart Irrigation',
+          'Penyiraman otomatis & hemat air sesuai kebutuhan.',
+        ],
+        [
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-10 h-10 text-green-600">
+            <path fillRule="evenodd" d="M10.5 3a.75.75 0 00-.75.75V6h-1a1.5 1.5 0 000 3h1v1.5H8.25a.75.75 0 000 1.5H10.5v1.5h-1a1.5 1.5 0 000 3h1v2.25a.75.75 0 001.5 0V18h1a1.5 1.5 0 000-3h-1v-1.5h2.25a.75.75 0 000-1.5H12v-1.5h1a1.5 1.5 0 000-3h-1V3.75A.75.75 0 0010.5 3z" clipRule="evenodd" />
+          </svg>,
+          'Agri-Chatbot',
+          'Asisten pintar untuk tanya jawab seputar pertanian.',
+        ],
+        [
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-green-600">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v18h16.5V3H3.75zm3.75 8.25h9v1.5h-9v-1.5zm0 3h9v1.5h-9v-1.5zm0-6h9v1.5h-9v-1.5z" />
+          </svg>,
+          'Prediction AI',
+          'Estimasi hasil panen akurat berbasis data.',
+        ],
+        [
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-10 h-10 text-green-600">
+            <path d="M3 5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25V18.75A2.25 2.25 0 0118.75 21H5.25A2.25 2.25 0 013 18.75V5.25zM4.5 6v12h15V6h-15z" />
+          </svg>,
+          'News & Article',
+          'Artikel, panduan, dan berita pertanian terbaru.',
+        ],
+        [
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-green-600">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h18v2H3V3zm0 4h18v2H3V7zm0 4h18v2H3v-2zm0 4h18v2H3v-2z" />
+          </svg>,
+          'Marketplace',
+          'Jual beli benih, pupuk, dan hasil panen secara langsung.',
+        ],
+        [
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-green-600">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 2.25C8.444 2.25 6.75 5.5 6.75 8.25c0 1.91 1.041 4.226 3.097 7.084a40.78 40.78 0 002.153 2.478.75.75 0 001.1 0 40.78 40.78 0 002.153-2.478C16.209 12.476 17.25 10.16 17.25 8.25c0-2.75-1.694-6-5.25-6z" />
+          </svg>,
+          'Eco-Score',
+          'Nilai ramah lingkungan + tips optimasi.',
+        ],
+        [
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-green-600">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18m9-9H3" />
+          </svg>,
+          'Real-time Monitoring Sensor',
+          'Pantau tanah & cuaca dengan grafik dan notifikasi.',
+        ],
+      ].map(([icon, title, desc], i) => (
+        <div
+          key={i}
+          className="bg-white p-8 rounded-2xl shadow-md hover:shadow-lg transition text-left flex flex-col justify-between"
+        >
+          <div className="mb-3">{icon}</div>
+          <h3 className="text-lg font-semibold text-green-700 mb-2">{title}</h3>
+          <p className="text-gray-600 text-sm leading-relaxed">{desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+    {/* Testimonial Section */}
+<section className="bg-white py-24 px-8">
+  <div className="max-w-5xl mx-auto text-center">
+    <h2 className="text-3xl font-bold text-green-700 uppercase tracking-wide mb-12">
+      What They’re Talking About
+    </h2>
+
+    {(() => {
+      const testimonials = [
+        {
+          quote:
+            "Dengan Teman Tani, saya lebih mudah memantau tanah dan cuaca lewat dashboard. Fitur Smart Irrigation sangat membantu menghemat air, sedangkan Prediksi Panen memberi gambaran hasil yang lebih akurat sehingga saya bisa atur strategi jual.",
+          name: "Mahfudin",
+          role: "Petani Padi, Jawa Barat",
+        },
+        {
+          quote:
+            "Prediksi AI di Teman Tani membantu saya memperkirakan hasil panen dengan lebih tepat. Sekarang saya bisa mengatur jadwal tanam dan distribusi lebih efisien.",
+          name: "Sulastri",
+          role: "Petani Sayur, Bandung",
+        },
+        {
+          quote:
+            "Marketplace-nya praktis! Saya bisa beli pupuk dan benih tanpa ribet, plus baca artikel terbaru soal pertanian modern. Teman Tani benar-benar bantu petani kecil seperti saya.",
+          name: "Rahmat",
+          role: "Petani Cabai, Yogyakarta",
+        },
+      ];
+
+      const [index, setIndex] = useState(0);
+      useEffect(() => {
+        const timer = setInterval(() => {
+          setIndex((prev) => (prev + 1) % testimonials.length);
+        }, 3000);
+        return () => clearInterval(timer);
+      }, []);
+
+      const { quote, name, role } = testimonials[index];
+
+      return (
+        <div className="transition-all duration-700 ease-in-out">
+          <blockquote className="text-gray-700 text-lg italic leading-relaxed">
+            “{quote}”
+          </blockquote>
+          <p className="mt-6 font-semibold text-green-700 text-lg">
+            {name}
+            <br />
+            <span className="text-gray-600 text-base">{role}</span>
+          </p>
+        </div>
+      );
+    })()}
+  </div>
+</section>
+
+{/* Gallery Section */}
+<section className="bg-gray-50 py-24 px-8" id="gallery">
+  <div className="max-w-6xl mx-auto text-center">
+    <h2 className="text-3xl font-bold text-green-700 uppercase tracking-wide mb-12">
+      Our Gallery
+    </h2>
+
+    <p className="text-gray-600 max-w-3xl mx-auto mb-12 text-lg">
+      Dokumentasi kegiatan tim Teman Tani dalam pemasangan perangkat IoT,
+      eksplorasi ke petani, dan pengujian sistem di lapangan.
+    </p>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+      {[
+        "https://i.pinimg.com/736x/38/0c/ec/380cecab8503d36c3fc541b09e1a6676.jpg",
+        "https://i.pinimg.com/736x/70/55/2f/70552ff9dcaafee76d33820a3a19929a.jpg",
+        "https://i.pinimg.com/736x/9a/94/91/9a9491e49541bce0e7a0961f774bda46.jpg",
+      ].map((url, i) => (
+        <div
+          key={i}
+          className="relative group overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition"
+        >
+          <img
+            src={url}
+            alt={`Gallery ${i + 1}`}
+            className="w-full h-64 object-cover transform group-hover:scale-105 transition duration-500"
+          />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center">
+            <span className="text-white text-lg font-medium">Teman Tani Activity</span>
           </div>
         </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+{/* Meet Our Team Section */}
+<section className="bg-white py-24 px-8" id="team">
+  <div className="max-w-6xl mx-auto text-center">
+    <h2 className="text-3xl font-bold text-green-700 uppercase tracking-wide mb-12">
+      Meet Our Team
+    </h2>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
+      {[
+        {
+          name: "Emejleano Rusmin Nggepo",
+          role: "Project Lead",
+          img: "data:image/png;base64,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", // kamu bisa ganti dengan foto asli tim
+        },
+        {
+          name: "Zahra Ismaya",
+          role: "UI/UX Designer & Frontend Developer",
+          img: "data:image/png;base64,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",
+        },
+        {
+          name: "Nurul Santi Hafifah",
+          role: "AI Engineer & Data Analyst",
+          img: "data:image/png;base64,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",
+        },
+      ].map((member, i) => (
+        <div
+          key={i}
+          className="bg-gray-50 rounded-2xl shadow-md hover:shadow-lg transition p-6 flex flex-col items-center"
+        >
+          <img
+            src={member.img}
+            alt={member.name}
+            className="w-32 h-32 rounded-full object-cover shadow-md"
+          />
+          <h3 className="mt-6 text-xl font-semibold text-green-700">
+            {member.name}
+          </h3>
+          <p className="text-gray-600 text-sm mt-2">{member.role}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+
+    {/* Subscribe Section */}
+    <section className="bg-green-700 text-white py-20 px-8 text-center">
+      <h3 className="text-2xl font-bold mb-6">
+        Subscribe to get information, latest news and interesting offers about Teman Tani
+      </h3>
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-3 max-w-lg mx-auto">
+        <Input placeholder="Your email" className="flex-1" />
+        <Button variant="secondary">Subscribe</Button>
       </div>
-    </main>
-  </>
+    </section>
+
+    {/* FAQ Section */}
+    <section className="bg-gray-50 py-24 px-8">
+      <div className="max-w-5xl mx-auto text-center">
+        <h2 className="text-3xl font-bold text-green-700 uppercase tracking-wide">
+          Frequently Asked Questions
+        </h2>
+        <p className="mt-4 text-gray-600">How Can We Help You?</p>
+
+        <div className="mt-12 text-left space-y-4">
+          {[
+            'Apa itu Teman Tani dan siapa yang bisa menggunakannya?',
+            'Apakah web ini gratis atau berbayar?',
+            'Jika saya tidak punya sensor IoT, apakah saya tetap bisa menggunakan Teman Tani?',
+            'Bagaimana cara kerja irigasi pintar (smart irrigation)?',
+            'Apakah penyiraman otomatis bisa diatur sesuai kebutuhan tanaman tertentu?',
+            'Seberapa akurat prediksi hasil panen di Teman Tani?',
+            'Apakah web ini bisa diakses lewat HP atau hanya lewat komputer?',
+            'Apa itu Eco-Score Dashboard?',
+            'Apa fungsi chatbot di Teman Tani?',
+            'Apakah data saya aman dan hanya bisa dilihat oleh saya?',
+          ].map((q, i) => (
+            <details
+              key={i}
+              className="group border border-gray-200 rounded-lg p-4 bg-white shadow-sm"
+            >
+              <summary className="font-semibold text-green-700 cursor-pointer list-none flex justify-between items-center">
+                {q}
+                <span className="text-gray-400 group-open:rotate-180 transition-transform">⌄</span>
+              </summary>
+              <p className="mt-3 text-gray-600 text-sm leading-relaxed">
+                Jawaban akan menyesuaikan dokumentasi resmi Teman Tani dan pengalaman pengguna.
+              </p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
 );
+
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
