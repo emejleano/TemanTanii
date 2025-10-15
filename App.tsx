@@ -484,7 +484,7 @@ const HomePage = () => (
     </section>
 
     {/* Mission Section (Tentang Kami) */}
-    <section id="tentang-kami" className="bg-white py-24 px-8 text-center">
+    <section id="about" className="bg-white py-24 px-8 text-center">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-bold text-green-700 uppercase tracking-wide">
           Our Mission
