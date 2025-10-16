@@ -5,6 +5,7 @@ import { WEATHER_API_KEY, CHATBOT_API_URL, CHATBOT_API_KEY, ADMIN_ID, MOCK_FARME
 let users: User[] = [
     { id: ADMIN_ID, email: 'admin@gmail.com', password: 'admin', name: 'Admin Tani', role: Role.ADMIN, nik: '123456789', domicile: 'Jakarta', age: 30 },
     { id: MOCK_FARMER_ID, email: 'petani@temantani.com', password: 'password123', name: 'Budi Santoso', role: Role.FARMER, farmerStatus: FarmerStatus.REGISTERED, location: { lat: -6.200000, lon: 106.816666 }, nik: '987654321', domicile: 'Bogor', age: 45 },
+    { id: MOCK_FARMER_ID, email: 'tani@temantani.com', password: 'password123', name: 'Sobat Tani', role: Role.FARMER, farmerStatus: FarmerStatus.ACTIVE, location: { lat: -6.200000, lon: 106.816666 }, nik: '145242544', domicile: 'Jakarta', age: 20 },
     { id: MOCK_BUYER_ID, email: 'pembeli@temantani.com', password: 'password123', name: 'Siti Aminah', role: Role.BUYER, nik: '555566667', domicile: 'Bandung', age: 28 },
 ];
 
