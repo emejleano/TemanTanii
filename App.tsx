@@ -786,6 +786,26 @@ const LoginPage = () => {
    <img src="https://emejleano.github.io/TemanTanii/logo.png" alt="Logo Teman Tani" className="h-20 w-20" />
 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Login ke Akun Anda</h2>
+                  <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p className="text-sm font-semibold text-blue-900 mb-2">Akun Demo untuk Testing:</p>
+        <div className="space-y-2 text-xs text-blue-800">
+            <div className="bg-white p-2 rounded">
+                <p className="font-medium">👨‍🌾 Petani:</p>
+                <p>Email: <code className="bg-blue-100 px-1">tani@temantani.com</code></p>
+                <p>Password: <code className="bg-blue-100 px-1">password123</code></p>
+            </div>
+            <div className="bg-white p-2 rounded">
+                <p className="font-medium">🛒 Pembeli:</p>
+                <p>Email: <code className="bg-blue-100 px-1">pembeli@temantani.com</code></p>
+                <p>Password: <code className="bg-blue-100 px-1">password123</code></p>
+            </div>
+            <div className="bg-white p-2 rounded">
+                <p className="font-medium">👤 Admin:</p>
+                <p>Email: <code className="bg-blue-100 px-1">admin@temantani.com</code></p>
+                <p>Password: <code className="bg-blue-100 px-1">admin123</code></p>
+            </div>
+        </div>
+    </div>
                 <p className="mt-2 text-center text-sm text-gray-600">
                     Atau{' '}
                      <button onClick={() => window.location.hash = '/register'} className="font-medium text-green-600 hover:text-green-500">
