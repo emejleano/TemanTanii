@@ -43,10 +43,14 @@ export interface Product {
   farmerId: string;
   farmerName: string;
   name: string;
+  category: 'Pertanian' | 'Perikanan'; // New field for SIMANTAP
   price: number;
   stock: number;
   imageUrl: string;
   description: string;
+  nutriScore?: string; // e.g., 'A', 'B', 'C'
+  ecoScore?: string; // e.g., 'A', 'B', 'C'
+  traceability?: string; // Information on origin and hygiene
 }
 
 export interface Article {
@@ -80,8 +84,14 @@ export interface ProduceOrder {
 
 export interface SensorData {
   timestamp: Date;
+  // Pertanian
   humidity: number;
   temperature: number;
+  soilMoisture?: number; // Adding explicit support
+  // Perikanan
+  ph?: number;
+  dissolvedOxygen?: number;
+  salinity?: number;
 }
 
 export interface ChatMessage {

@@ -3,21 +3,23 @@ import { WEATHER_API_KEY, CHATBOT_API_URL, CHATBOT_API_KEY, ADMIN_ID, MOCK_FARME
 
 // --- MOCK DATABASE ---
 let users: User[] = [
-    { id: ADMIN_ID, email: 'admin@gmail.com', password: 'admin', name: 'Admin Tani', role: Role.ADMIN, nik: '123456789', domicile: 'Jakarta', age: 30 },
+    { id: ADMIN_ID, email: 'admin@temantani.com', password: 'admin123', name: 'Admin SIMANTAP', role: Role.ADMIN, nik: '123456789', domicile: 'Jakarta', age: 30 },
     { id: MOCK_FARMER_ID, email: 'petani@temantani.com', password: 'password123', name: 'Budi Santoso', role: Role.FARMER, farmerStatus: FarmerStatus.REGISTERED, location: { lat: -6.200000, lon: 106.816666 }, nik: '987654321', domicile: 'Bogor', age: 45 },
     { id: MOCK_FARMER_ID, email: 'tani@temantani.com', password: 'password123', name: 'Sobat Tani', role: Role.FARMER, farmerStatus: FarmerStatus.ACTIVE, location: { lat: -6.200000, lon: 106.816666 }, nik: '145242544', domicile: 'Jakarta', age: 20 },
     { id: MOCK_BUYER_ID, email: 'pembeli@temantani.com', password: 'password123', name: 'Siti Aminah', role: Role.BUYER, nik: '555566667', domicile: 'Bandung', age: 28 },
 ];
 
 let products: Product[] = [
-    { id: 'prod-1', farmerId: MOCK_FARMER_ID, farmerName: 'Budi Santoso', name: 'Tomat Ceri Organik', price: 25000, stock: 100, imageUrl: 'https://picsum.photos/seed/tomato/400/300', description: 'Tomat ceri segar langsung dari kebun, ditanam tanpa pestisida.' },
-    { id: 'prod-2', farmerId: MOCK_FARMER_ID, farmerName: 'Budi Santoso', name: 'Bayam Hijau Segar', price: 15000, stock: 200, imageUrl: 'https://picsum.photos/seed/spinach/400/300', description: 'Bayam hijau kaya nutrisi, cocok untuk tumis atau jus.' },
-    { id: 'prod-3', farmerId: 'farmer-002', farmerName: 'Dewi Lestari', name: 'Wortel Manis', price: 18000, stock: 150, imageUrl: 'https://picsum.photos/seed/carrot/400/300', description: 'Wortel manis dan renyah, baik untuk kesehatan mata.' },
+    { id: 'prod-1', farmerId: MOCK_FARMER_ID, farmerName: 'Budi Santoso', name: 'Tomat Ceri Organik', category: 'Pertanian', price: 25000, stock: 100, imageUrl: 'https://picsum.photos/seed/tomato/400/300', description: 'Tomat ceri segar langsung dari kebun, ditanam tanpa pestisida.', nutriScore: 'A', ecoScore: 'A', traceability: 'Lahan organik bersertifikat, Bogor' },
+    { id: 'prod-2', farmerId: MOCK_FARMER_ID, farmerName: 'Budi Santoso', name: 'Bayam Hijau Segar', category: 'Pertanian', price: 15000, stock: 200, imageUrl: 'https://picsum.photos/seed/spinach/400/300', description: 'Bayam hijau kaya nutrisi, cocok untuk tumis atau jus.', nutriScore: 'A', ecoScore: 'B', traceability: 'Lahan hidroponik, Bogor' },
+    { id: 'prod-3', farmerId: 'farmer-002', farmerName: 'Dewi Lestari', name: 'Wortel Manis', category: 'Pertanian', price: 18000, stock: 150, imageUrl: 'https://picsum.photos/seed/carrot/400/300', description: 'Wortel manis dan renyah, baik untuk kesehatan mata.', nutriScore: 'A', ecoScore: 'A', traceability: 'Petani lokal, Lembang' },
+    { id: 'prod-4', farmerId: 'farmer-003', farmerName: 'Ahmad Bahar', name: 'Ikan Nila Segar', category: 'Perikanan', price: 35000, stock: 50, imageUrl: 'https://picsum.photos/seed/fish/400/300', description: 'Ikan nila hasil budidaya tambak Mina-Padi, higienis dan pakan alami.', nutriScore: 'A', ecoScore: 'A', traceability: 'Sistem Mina-Padi tersertifikasi, Jawa Barat' },
+    { id: 'prod-5', farmerId: 'farmer-003', farmerName: 'Ahmad Bahar', name: 'Udang Vaname', category: 'Perikanan', price: 80000, stock: 30, imageUrl: 'https://picsum.photos/seed/shrimp/400/300', description: 'Udang segar dari tambak bebas antibiotik.', nutriScore: 'B', ecoScore: 'B', traceability: 'Tambak pesisir utara, standar ekspor' },
 ];
 
 let articles: Article[] = [
-    { id: 'art-1', title: '5 Tips Jitu Merawat Tanaman Tomat di Musim Hujan', content: 'Musim hujan bisa menjadi tantangan tersendiri bagi petani tomat. Berikut adalah 5 tips untuk memastikan tanaman tomat Anda tetap sehat dan produktif...', author: 'Admin Tani', createdAt: new Date().toISOString() },
-    { id: 'art-2', title: 'Mengenal Manfaat Pertanian Organik untuk Lingkungan', content: 'Pertanian organik tidak hanya baik untuk kesehatan kita, tetapi juga untuk kelestarian lingkungan. Mari kita pelajari lebih lanjut...', author: 'Admin Tani', createdAt: new Date().toISOString() },
+    { id: 'art-1', title: '5 Tips Jitu Merawat Tanaman Tomat di Musim Hujan', content: 'Musim hujan bisa menjadi tantangan tersendiri bagi petani tomat. Berikut adalah 5 tips untuk memastikan tanaman tomat Anda tetap sehat dan produktif...', author: 'Admin SIMANTAP', createdAt: new Date().toISOString() },
+    { id: 'art-2', title: 'Mengenal Manfaat Pertanian Organik untuk Lingkungan', content: 'Pertanian organik tidak hanya baik untuk kesehatan kita, tetapi juga untuk kelestarian lingkungan. Mari kita pelajari lebih lanjut...', author: 'Admin SIMANTAP', createdAt: new Date().toISOString() },
 ];
 
 let devicePurchases: DevicePurchase[] = [];
@@ -141,7 +143,7 @@ export const mockApiService = {
           id: `art-${Date.now()}`,
           title,
           content,
-          author: 'Admin Tani',
+          author: 'Admin SIMANTAP',
           createdAt: new Date().toISOString()
       };
       articles.unshift(newArticle);
@@ -269,15 +271,15 @@ export const chatbotService = {
   getReply: async (prompt: string): Promise<string> => {
     // ✅ Pesan pembuka saat pertama kali muncul
     if (!prompt) {
-      return "👩‍🌾 Hai! Saya adalah Asisten Teman Tani 🌱. Saya siap membantu Anda menjawab berbagai pertanyaan seputar pertanian, ladang, cuaca, dan lainnya. Silakan ajukan pertanyaan pertama Anda!";
+      return "👩‍🌾 Hai! Saya adalah Asisten SIMANTAP 🌱. Saya siap membantu Anda menjawab berbagai pertanyaan seputar pertanian, budidaya perikanan/tambak, cuaca, dan lainnya. Silakan ajukan pertanyaan pertama Anda!";
     }
 
     try {
       // ✅ Tambahkan konteks tetap di depan prompt
       const fullPrompt = `
-        Kamu adalah Asisten Teman Tani 🌱, asisten cerdas yang membantu petani Indonesia dalam urusan pertanian, ladang, panen, dan cuaca. 
-        Jawablah selalu dalam bahasa Indonesia, tanpa tanda bintang (*), tanpa kalimat seperti 'ini jawaban', dan langsung ke inti jawaban.
-        Pertanyaan petani: ${prompt}
+        Kamu adalah Asisten SIMANTAP 🌱, asisten cerdas yang membantu petani dan pembudidaya ikan di Indonesia dalam urusan agromaritim (pertanian, tambak, panen, cuaca). 
+        Jawablah selalu dalam bahasa Indonesia, tanpa tanda bintang (*), tanpa kalimat seperti 'ini jawaban', dan langsung ke inti jawaban. Berikan informasi yang praktis dan relevan.
+        Pertanyaan pengguna: ${prompt}
       `;
 
       const response = await fetch(
@@ -301,3 +303,4 @@ export const chatbotService = {
     }
   }
 };
+

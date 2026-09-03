@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="./public/logo.png" alt="TemanTani Logo" width="150" />
+  <img src="./public/logo.png" alt="SIMANTAP Logo" width="150" />
 </p>
 
-# 🌾 TemanTani – Smart Agriculture Dashboard
+# 🌾 SIMANTAP – Smart Agriculture Dashboard
 
-TemanTani adalah aplikasi **web dashboard pertanian pintar** yang mengintegrasikan **IoT, AI, Big Data, dan marketplace** untuk membantu petani dalam mengelola lahan, memantau kondisi tanaman secara real-time, melakukan prediksi hasil panen, serta memasarkan hasil pertanian secara langsung ke pembeli.
+SIMANTAP adalah aplikasi **web dashboard agromaritim pintar** yang mengintegrasikan **IoT, AI, Big Data, dan marketplace** untuk membantu petani dan pembudidaya ikan dalam mengelola lahan, memantau kondisi tanaman secara real-time, melakukan prediksi hasil panen, serta memasarkan hasil pertanian secara langsung ke pembeli.
 
 Proyek ini bersifat **simulasi frontend** menggunakan React + TypeScript dan **mock data/DOM**, sehingga dapat dijalankan tanpa backend maupun database nyata.  
 
@@ -39,7 +39,7 @@ Proyek ini menggunakan pendekatan berbasis **mock data dan DOM state** tanpa dat
 | Layanan | URL | Fungsi |
 |--------|------|---------|
 | 🌦️ OpenWeather | Prakiraan cuaca harian |
-| 🤖 ChatGPT API | Chatbot bantuan petani |
+| 🤖 ChatGPT API | Chatbot bantuan petani dan pembudidaya ikan |
 | 📊 Mock API Internal | `mockApiService` | CRUD pengguna, produk, order, forecasting, eco-score |
 
 ---
@@ -75,8 +75,8 @@ npm run dev
 
 Dikembangkan oleh Emejleano Rusmin Nggepo, Zahra Ismaya, dan Nurul Santi Hafifah
 
-🌾 TemanTani – Solusi Pertanian Cerdas untuk Masa Depan Berkelanjutan.
+🌾 SIMANTAP – Solusi Pertanian Cerdas untuk Masa Depan Berkelanjutan.
 
 <p align="center">
-  <img src="./public/logo.png" alt="TemanTani Logo" width="150" />
+  <img src="./public/logo.png" alt="SIMANTAP Logo" width="150" />
 </p>
